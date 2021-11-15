@@ -1,0 +1,17 @@
+on: push #Cuando se haga un push va a hacer esto
+name: deploy 
+jobs:
+  deploy:
+    name: deploy to cluster
+    runs-on: ubuntu-latest #La maquina virtual que va a correr github para correr el código
+    steps:
+    - uses: actions/checkout@master #Organización/repositorio donde estan las acciones
+    - name: build and push to docker
+      uses: docker/build-push-action@v1 #Vamos a hacer una acción que ya está hecha, del repositorio docker/build-push-action versión 1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }} #Estos secretos guardan las credenciales
+        password: ${{ secrets.DOCKER_PASSWORD }} #Previamente las definimos en github y pueden ser accedidas por las actions
+        repository: ${{ github.repository }}
+        tag_with_ref: true
+        tag_with_sha: true
+        tags: ${{ github.sha }}
